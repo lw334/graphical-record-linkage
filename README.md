@@ -1,3 +1,7 @@
+# Development
+
+  - currently debugging the python wrapper for the R algorithm and setting benchmarks for record linkage comparison.
+
 # ebLink for Python
 A python encapsulation of the R graphical record linkage algorithm used in [Steorts, et. al. (2015)](https://arxiv.org/abs/1312.4645).
 
