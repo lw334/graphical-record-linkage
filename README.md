@@ -15,7 +15,7 @@ If called interactively, the user will be presented with a series of prompts tha
 
 To call the class interactively, use:
 
-`link = eblink.EBLink(interactive=True)`
+`link = eblink.EBlink(interactive=True)`
 
 If called non-interactively, the user must provide the necessary inputs.
 

@@ -10,18 +10,19 @@
 # Current build only takes csvs. To add additional file types or connections,
 #    please look at read_iterator.
 
-from datetime import datetime
-import rpy2
-import pandas as pd
 import os
 import random
 import subprocess
-import csv
-# Execute necessary dependencies for rpy2
-from numpy import *
+
+import pandas as pd
+import numpy as np
 import scipy as sp
-from pandas import *
+import rpy2
+
+import csv
 import pickle
+
+from datetime import datetime
 
 class EBlink(object):
 
@@ -105,7 +106,7 @@ class EBlink(object):
     def match_columns(self):
         return self._matchcolumns
 
-    @match_columns.setter(self):
+    @match_columns.setter
     def match_columns_setter(self, match_columns):
         if type(match_columns) == dict:
             if self._columns != None:
@@ -122,7 +123,7 @@ class EBlink(object):
     def indices(self):
         return self._indices
 
-    @indices.setter(self):
+    @indices.setter
     def indices_setter(self, indices):
         if type(indices) == list:
             self._indices = indices
@@ -140,12 +141,12 @@ class EBlink(object):
         '''
         if delete: # This is for a redo function
             self._files = []
-            print 'Files: {}'.format(self._files)
+            print('Files: {}'.format(self._files))
             return
 
         if self._interactive:
-            print '\nPLEASE SPECIFY THE FILEPATHS FOR THE DATA YOU WISH TO LINK. Separate each filepath by a comma.\n'
-            print 'Current files loaded: {}'.format(self._files)
+            print('\nPLEASE SPECIFY THE FILEPATHS FOR THE DATA YOU WISH TO LINK. Separate each filepath by a comma.\n')
+            print('Current files loaded: {}'.format(self._files))
             inp = None
             while inp == None:
                 inp = raw_input('\nFilepaths: ')
@@ -158,7 +159,7 @@ class EBlink(object):
                 if os.path.isfile(n):
                     self._files.append(n)
                 else:
-                    print '\nERROR: {} is not a file.\n'.format(n)
+                    print('\nERROR: {} is not a file.\n'.format(n))
                     self.file_retry()
         else:
             if type(filename) == list:
@@ -166,7 +167,7 @@ class EBlink(object):
             if os.path.isfile(filename):
                 self._files.append(filename)
             else:
-                print '\nERROR: {} is not a file.\n'.format(filename)
+                print('\nERROR: {} is not a file.\n'.format(filename))
                 self.file_retry()
 
         if self._interactive:
@@ -212,7 +213,7 @@ class EBlink(object):
             if count == None:
                 count = 1
             for f in self._files:
-                print '\nPLEASE INDICATE WHICH COLUMNS IN {} YOU WOULD LIKE TO USE FOR LINKING. Separate each column name with a comma.'.format(f)
+                print('\nPLEASE INDICATE WHICH COLUMNS IN {} YOU WOULD LIKE TO USE FOR LINKING. Separate each column name with a comma.'.format(f))
                 cols = []
                 to_add = None
                 while to_add == None:
@@ -222,7 +223,7 @@ class EBlink(object):
                 self._columns.append(cols)
                 if count > 1:
                     for x in self._columns[0]:
-                        print '\nWhich column in this file matches to {}?'.format(x)
+                        print('\nWhich column in this file matches to {}?'.format(x))
                         match = None
                         while match == None:
                             match = raw_input('\nColumn: ')
@@ -268,7 +269,7 @@ class EBlink(object):
             while typ != 'C' and typ != 'S' and typ != 'c' and typ != 's':
                 typ = raw_input('\nIs {} a categorical (C) or string (S) field?: '.format(col))
                 if typ != 'C' and typ != 'S' and typ != 'c' and typ != 's':
-                    print '\nERROR: Please enter C for categorical or S for string.'
+                    print('\nERROR: Please enter C for categorical or S for string.')
             types[col] = typ.upper()
 
         if not self.check_correct():
@@ -282,15 +283,15 @@ class EBlink(object):
         coder to set if non-interactive session.
         '''
         if self._interactive == True:
-            print '\nPLEASE SET THE ALPHA AND BETA VALUES FOR THE PRIOR DISTRIBUTION.'
-            print 'If you are unsure how to set these values, please see the documentation for ebLink.\n'
+            print('\nPLEASE SET THE ALPHA AND BETA VALUES FOR THE PRIOR DISTRIBUTION.')
+            print('If you are unsure how to set these values, please see the documentation for ebLink.\n')
             self.alpha = None
             while self.alpha == None:
                 self.alpha = raw_input('Alpha: ')
             self.beta = None
             while self.beta == None:
                 self.beta = raw_input('Beta: ')
-            print '\nHOW MANY INTERATIONS SHOULD BE RUN? RECOMMENDED > 100,000.'
+            print('\nHOW MANY INTERATIONS SHOULD BE RUN? RECOMMENDED > 100,000.')
             self.iterations = 0
             while self.iterations == 0:
                 self.iterations = raw_input('\nIterations: ')
@@ -308,7 +309,7 @@ class EBlink(object):
         a single hidden tmp csv for feeding into the system.
         '''
         if len(self._files) < 2:
-            print 'Only one file found. Please set additional files.'
+            print('Only one file found. Please set additional files.')
             return
 
         self._build_directory()
@@ -401,8 +402,8 @@ class EBlink(object):
          self._numrecords)
         self.pop_est = np.average(estPopSize)
         del estPopSize
-        print "Estimated population size: ", self.pop_est
-        print "Total number of records: ", self._numrecords
+        print("Estimated population size: ", self.pop_est)
+        print("Total number of records: ", self._numrecords)
         if self.pop_est <= self._numrecords - 1:
             # Only look for linked pairs if there are pairs to look for
             p = ri.calc_linkages(result)
@@ -416,7 +417,7 @@ class EBlink(object):
         ## This function uses Pandas and may need to be edited for scaling! ##
         '''
         if not self.pairs: # Don't run this if there aren't any pairs
-            print 'No pairs identified.'
+            print('No pairs identified.')
             return
 
         for pair in self.pairs:
@@ -438,12 +439,12 @@ class EBlink(object):
                 line = list(line)
                 # Check that file and filenum specified align
                 if self._filenum[filenum_index] != (i + 1):
-                    print "WARNING: File numbers don't match for entry {}.".format(filenum_index)
-                    print 'Listed file {} should be {}.'.format(self._filenum[filenum_index], i + 1)
-                    print 'Aborting. Check inputs for mismatch.'
-                    print 'Index with error: ', filenum_index
-                    print self._filenum[filenum_index + 1], ' is next.'
-                    print 'Filenum: ', self._filenum
+                    print("WARNING: File numbers don't match for entry {}.".format(filenum_index))
+                    print( 'Listed file {} should be {}.'.format(self._filenum[filenum_index], i + 1))
+                    print( 'Aborting. Check inputs for mismatch.')
+                    print( 'Index with error: ', filenum_index)
+                    print( self._filenum[filenum_index + 1], ' is next.')
+                    print( 'Filenum: ', self._filenum)
                     return
 
                 # Check if this entry has matches that are already placed
@@ -491,10 +492,10 @@ class EBlink(object):
         rv.append(self._columns[0] + ['ETL_ID'])
         for i in range(len(self._filenum)):
             if interactive and (i+1 in keeps or i+1 in deletes):
-                print 'Linked entries:'
-                print '  Entry {}: {}'.format(i+1, list(data.iloc[i]))
+                print( 'Linked entries:')
+                print( '  Entry {}: {}'.format(i+1, list(data.iloc[i])))
                 for j in self._lookup_pairs[i]:
-                    print '  Entry {}: {}'.format(j, list(data.iloc[j]))
+                    print( '  Entry {}: {}'.format(j, list(data.iloc[j])))
                 keep = None
                 while keep not in self._lookup_pairs[i]:
                     keep = int(raw_input('Please select which ETL_ID to keep: '))
@@ -550,4 +551,4 @@ class EBlink(object):
         Deletes the tmp folder.
         '''
         subprocess.call('rm -r {}'.format(self._tmp_dir), shell=True)
-        print 'Temp folder deleted.'
+        print( 'Temp folder deleted.')
