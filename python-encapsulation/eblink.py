@@ -74,7 +74,7 @@ class EBlink(object):
         return self._files
 
     @files.setter
-    def files_setter(self, files):
+    def files(self, files):
         if type(files) == list and len(filter(lambda x: os.path.isfile(x), files)) == len(files):
             self._files = files
         else:
@@ -85,7 +85,7 @@ class EBlink(object):
         return self._columns
 
     @columns.setter
-    def column_setter(self, columns):
+    def columns(self, columns):
         if type(columns) == list:
             self._columns = columns
         else:
@@ -96,7 +96,7 @@ class EBlink(object):
         return self._column_types
 
     @column_types.setter
-    def column_types_setter(self, types):
+    def column_types(self, types):
         if type(types) == dict:
             self._column_types = types
         else:
@@ -107,13 +107,18 @@ class EBlink(object):
         return self._matchcolumns
 
     @match_columns.setter
+<<<<<<< HEAD
     def match_columns_setter(self, match_columns):
+=======
+    def match_columns(self, match_columns):
+>>>>>>> 69dfb73eb96cf5fd7dd368c81ac588e680044644
         if type(match_columns) == dict:
             if self._columns != None:
                 for x in match_columns.keys():
-                    if x not in self._columns:
-                        raise NameError('matchcolumns keys do not match columns')
-                    self._matchcolumns = match_columns
+                    if x not in self._columns[0]:
+                        print '{} not in columns'.format(x)
+                        raise NameError('match_columns keys do not match columns')
+                self._matchcolumns = match_columns
             else:
                 self._matchcolumns = match_columns
         else:
@@ -124,7 +129,11 @@ class EBlink(object):
         return self._indices
 
     @indices.setter
+<<<<<<< HEAD
     def indices_setter(self, indices):
+=======
+    def indices(self, indices):
+>>>>>>> 69dfb73eb96cf5fd7dd368c81ac588e680044644
         if type(indices) == list:
             self._indices = indices
         else:
